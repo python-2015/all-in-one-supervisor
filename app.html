@@ -140,6 +140,21 @@
                     </div>
                 </div>
 
+                <div class="distraction-settings">
+                    <h3>分心 App 黑名单</h3>
+                    <p class="distraction-hint">勾选后，番茄钟结束会提醒你关闭这些 App，强制休息 1 分钟</p>
+                    <div class="distraction-list" id="distractionList">
+                        <label class="distraction-item"><input type="checkbox" value="wechat" checked> 微信</label>
+                        <label class="distraction-item"><input type="checkbox" value="douyin" checked> 抖音</label>
+                        <label class="distraction-item"><input type="checkbox" value="xiaohongshu" checked> 小红书</label>
+                        <label class="distraction-item"><input type="checkbox" value="bilibili" checked> B站 / 哔哩哔哩</label>
+                        <label class="distraction-item"><input type="checkbox" value="weibo" checked> 微博</label>
+                        <label class="distraction-item"><input type="checkbox" value="taobao"> 淘宝 / 京东</label>
+                        <label class="distraction-item"><input type="checkbox" value="game"> 手游</label>
+                        <label class="distraction-item"><input type="checkbox" value="novel"> 小说 / 网文</label>
+                    </div>
+                </div>
+
                 <div class="pomodoro-info">
                     <p>🍅 今日已完成：<strong><span id="completedPomodoros">0</span></strong> 个番茄</p>
                 </div>
@@ -433,6 +448,35 @@
             <div class="help-section">
                 <h3>💾 数据安全</h3>
                 <p>所有数据存在你浏览器本地，<strong>记得在"数据统计"里定期导出备份</strong>。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 强制休息浮层（番茄钟结束后出现） -->
+    <div class="forced-break" id="forcedBreak">
+        <div class="forced-break-content">
+            <div class="breathing-orb" id="breathingOrb"></div>
+            <h1 class="forced-break-title" id="breakTitle">休息时间</h1>
+            <div class="forced-break-countdown" id="breakCountdown">1:00</div>
+            <p class="forced-break-subtitle" id="breakSubtitle">放下手机，看一眼窗外</p>
+
+            <div class="break-todo" id="breakTodo">
+                <h3>现在请关掉：</h3>
+                <ul class="break-todo-list" id="breakTodoList"></ul>
+            </div>
+
+            <div class="break-skip-zone">
+                <button class="break-skip-btn" id="breakSkipBtn" disabled>
+                    <span class="break-skip-text">长按 3 秒跳过</span>
+                    <span class="break-skip-progress"></span>
+                </button>
+                <p class="break-skip-hint" id="breakSkipHint">跳过会被记录到数据里</p>
+            </div>
+
+            <div class="break-stats" id="breakStats">
+                <span>今日完成休息: <strong id="breakTaken">0</strong> 次</span>
+                <span class="break-stat-divider">|</span>
+                <span>跳过休息: <strong id="breakSkipped">0</strong> 次</span>
             </div>
         </div>
     </div>
