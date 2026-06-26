@@ -948,6 +948,7 @@ function init() {
     setupLinkBar();
     setupFab();
     setupStatusBar();
+    setupDistractionSettings();
     updateOverview();
     registerServiceWorker();
 
@@ -1740,6 +1741,8 @@ function speakPomodoroEnd() {
             ];
             speak(msgs[Math.floor(Math.random() * msgs.length)]);
         }, 1500);
+        // 3. 触发强制全屏休息（1 分钟）
+        setTimeout(() => startForcedBreak(), 500);
     } else {
         playGentleDing();
         showToast('✨', '休息结束，准备好继续了吗？');
@@ -1869,3 +1872,219 @@ window.deleteHabit = deleteHabit;
 window.editHabit = editHabit;
 window.toggleTodo = toggleTodo;
 window.deleteTodo = deleteTodo;
+
+// ============ 强制休息（番茄钟结束后全屏 1 分钟） ============
+const DISTRACTION_APP_NAMES = {
+    wechat: '微信',
+    douyin: '抖音',
+    xiaohongshu: '小红书',
+    bilibili: 'B站 / 哔哩哔哩',
+    weibo: '微博',
+    taobao: '淘宝 / 京东',
+    game: '手游',
+    novel: '小说 / 网文'
+};
+
+let breakTimer = null;
+let breakCountdown = 60;
+let breakStartedAt = 0;
+let breakSkipTimer = null;
+let breakSkipHold = null;
+let breakActive = false;
+
+function getDistractionList() {
+    return Array.from(document.querySelectorAll('.distraction-item input:checked'))
+        .map(el => el.value);
+}
+
+function saveDistractionList() {
+    const list = getDistractionList();
+    Storage.set('distractionList', list);
+}
+
+function loadDistractionList() {
+    const saved = Storage.get('distractionList');
+    if (saved && Array.isArray(saved)) {
+        document.querySelectorAll('.distraction-item input').forEach(el => {
+            el.checked = saved.includes(el.value);
+        });
+    }
+}
+
+function getTodayBreakStats() {
+    const todayKey = Storage.getTodayKey();
+    const stats = Storage.get('breakStats') || {};
+    if (stats.dateKey !== todayKey) {
+        return { dateKey: todayKey, taken: 0, skipped: 0 };
+    }
+    return stats;
+}
+
+function saveTodayBreakStats(stats) {
+    Storage.set('breakStats', stats);
+}
+
+function startForcedBreak() {
+    if (breakActive) return;
+    breakActive = true;
+    breakCountdown = 60;
+    breakStartedAt = Date.now();
+
+    const overlay = document.getElementById('forcedBreak');
+    const countdown = document.getElementById('breakCountdown');
+    const todoList = document.getElementById('breakTodoList');
+    const skipBtn = document.getElementById('breakSkipBtn');
+    const skipProgress = skipBtn.querySelector('.break-skip-progress');
+    const skipText = skipBtn.querySelector('.break-skip-text');
+    const statsDiv = document.getElementById('breakStats');
+
+    // 黑名单
+    const distractions = getDistractionList();
+    if (distractions.length > 0) {
+        todoList.innerHTML = distractions.map(d => {
+            const name = DISTRACTION_APP_NAMES[d] || d;
+            return `<li><span class="app-bullet"></span>${name}</li>`;
+        }).join('');
+        document.getElementById('breakTodo').style.display = 'block';
+    } else {
+        document.getElementById('breakTodo').style.display = 'none';
+    }
+
+    // 显示统计
+    const stats = getTodayBreakStats();
+    document.getElementById('breakTaken').textContent = stats.taken;
+    document.getElementById('breakSkipped').textContent = stats.skipped;
+
+    // 显示浮层
+    overlay.classList.add('active');
+    try {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+    } catch (e) {}
+
+    // 倒计时
+    function tick() {
+        if (!breakActive) return;
+        breakCountdown--;
+        const m = Math.floor(breakCountdown / 60);
+        const s = breakCountdown % 60;
+        countdown.textContent = `${m}:${String(s).padStart(2, '0')}`;
+        if (breakCountdown <= 0) {
+            endForcedBreak(true);
+            return;
+        }
+        if (breakCountdown <= 10) {
+            countdown.classList.add('countdown-final');
+        }
+        breakTimer = setTimeout(tick, 1000);
+    }
+    breakTimer = setTimeout(tick, 1000);
+
+    // 跳过按钮：长按 3 秒
+    function startSkip(e) {
+        e.preventDefault();
+        if (breakSkipHold) return;
+        breakSkipHold = setTimeout(() => {
+            if (breakActive) endForcedBreak(false);
+        }, 3000);
+        skipProgress.style.transition = 'width 3s linear';
+        skipProgress.style.width = '100%';
+    }
+    function endSkip(e) {
+        e.preventDefault();
+        if (breakSkipHold) {
+            clearTimeout(breakSkipHold);
+            breakSkipHold = null;
+        }
+        skipProgress.style.transition = 'width 0.3s';
+        skipProgress.style.width = '0%';
+    }
+    skipBtn.addEventListener('mousedown', startSkip);
+    skipBtn.addEventListener('mouseup', endSkip);
+    skipBtn.addEventListener('mouseleave', endSkip);
+    skipBtn.addEventListener('touchstart', startSkip);
+    skipBtn.addEventListener('touchend', endSkip);
+
+    // 提示
+    const hints = [
+        '放下手机，看一眼窗外',
+        '闭眼休息 30 秒',
+        '起身倒杯水',
+        '看看 6 米外的绿植',
+        '做 3 次深呼吸'
+    ];
+    document.getElementById('breakSubtitle').textContent = hints[Math.floor(Math.random() * hints.length)];
+
+    // 发送系统通知
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('番茄钟到啦', {
+            body: '1 分钟强制休息已开始。放下手机，闭眼休息。',
+            icon: 'icon-192.png',
+            tag: 'forced-break',
+            requireInteraction: true,
+            silent: false
+        });
+    }
+}
+
+function endForcedBreak(complete) {
+    if (!breakActive) return;
+    breakActive = false;
+
+    if (breakTimer) {
+        clearTimeout(breakTimer);
+        breakTimer = null;
+    }
+    if (breakSkipHold) {
+        clearTimeout(breakSkipHold);
+        breakSkipHold = null;
+    }
+
+    // 记录统计
+    const stats = getTodayBreakStats();
+    if (complete) {
+        stats.taken++;
+        showToast('太棒了', '1 分钟休息完成，可以继续啦');
+        speak('休息好了... 准备好开始下一个番茄钟了吗');
+    } else {
+        stats.skipped++;
+        showToast('已跳过', '休息被跳过了... 下次试试坚持 1 分钟？');
+    }
+    saveTodayBreakStats(stats);
+
+    // 关闭浮层
+    document.getElementById('forcedBreak').classList.remove('active');
+    document.getElementById('breakCountdown').classList.remove('countdown-final');
+
+    // 退出全屏
+    try {
+        if (document.fullscreenElement && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
+    } catch (e) {}
+
+    // 自动开始休息倒计时（如果用户完成了 1 分钟强制休息）
+    if (complete) {
+        const isLongBreak = (AppState.completedPomodoros % 4 === 0);
+        pomodoroMode = isLongBreak ? 'longBreak' : 'shortBreak';
+        pomodoroTime = isLongBreak ? (parseInt(document.getElementById('longBreakTime').value) || 15) * 60
+                                    : (parseInt(document.getElementById('breakTime').value) || 5) * 60;
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('pauseBtn').disabled = true;
+        document.getElementById('timerLabel').textContent = isLongBreak ? '长休息' : '短休息';
+        updateTimerDisplay();
+        // 5 秒后自动开始
+        setTimeout(() => {
+            if (!breakActive && pomodoroTime > 0) startPomodoro();
+        }, 5000);
+    }
+}
+
+// 初始化黑名单 UI
+function setupDistractionSettings() {
+    loadDistractionList();
+    document.querySelectorAll('.distraction-item input').forEach(el => {
+        el.addEventListener('change', saveDistractionList);
+    });
+}
