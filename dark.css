@@ -737,6 +737,271 @@ input[type="date"] {
     bottom: 220px !important;
 }
 
+/* ============================================
+   新增图表样式（柱状图、环形图）
+   ============================================ */
+.bar-svg {
+    width: 100% !important;
+    height: 140px !important;
+    display: block;
+}
+
+.bar-svg rect {
+    transition: opacity 0.2s;
+}
+.bar-svg rect:hover {
+    opacity: 1 !important;
+}
+
+.donut-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+    flex-wrap: wrap;
+}
+
+.donut-svg {
+    width: 160px !important;
+    height: 160px !important;
+    flex-shrink: 0;
+}
+
+.donut-legend {
+    flex: 1 !important;
+    min-width: 200px;
+}
+
+.legend-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-bottom: 12px !important;
+}
+
+.legend-bar {
+    flex: 1 !important;
+    height: 8px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 4px !important;
+    overflow: hidden;
+    min-width: 100px;
+}
+
+.legend-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.legend-text {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 70px;
+}
+
+.legend-label {
+    font-size: 13px !important;
+    font-weight: 600;
+}
+
+.legend-value {
+    font-size: 11px !important;
+    color: #888 !important;
+}
+
+/* ============================================
+   移动端适配
+   ============================================ */
+
+/* 平板及以下 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px !important;
+    }
+
+    .header {
+        padding: 14px 18px !important;
+    }
+
+    .header h1 {
+        font-size: 22px !important;
+    }
+
+    /* 顶部 stat-card 改成 2 列 */
+    .stat-card {
+        padding: 14px !important;
+    }
+    .stat-card .stat-value {
+        font-size: 22px !important;
+    }
+    .stat-card .stat-label {
+        font-size: 11px !important;
+    }
+
+    /* tabs 缩小 */
+    .tab-btn {
+        padding: 10px 8px !important;
+        font-size: 13px !important;
+    }
+    .tab-text {
+        font-size: 13px !important;
+    }
+
+    /* 链接条：紧凑模式 */
+    .link-bar {
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+        flex-wrap: wrap;
+        gap: 4px !important;
+    }
+    .link-bar-link, .link-bar-copy {
+        font-size: 11px !important;
+        padding: 3px 8px !important;
+    }
+    .link-bar-label {
+        display: none;
+    }
+    .link-bar-sep {
+        display: none;
+    }
+
+    /* tab 内容卡片内边距 */
+    .tab-content, .ai-container, .pomodoro-container, .chart-container {
+        padding: 16px !important;
+    }
+
+    /* 输入框更大 */
+    input[type="text"], input[type="number"], input[type="date"] {
+        font-size: 16px !important;
+        padding: 12px 14px !important;
+    }
+
+    /* 按钮更大更好按 */
+    .btn {
+        padding: 12px 18px !important;
+        font-size: 14px !important;
+        min-height: 44px !important;
+    }
+
+    /* FAB 调整位置（避开 iPhone 底部 home indicator） */
+    .fab {
+        bottom: 90px !important;
+        right: 16px !important;
+        width: 56px !important;
+        height: 56px !important;
+    }
+
+    /* 状态条 */
+    .status-bar {
+        bottom: 16px !important;
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+    }
+
+    /* 帮助按钮：往上挪避开状态条 */
+    .help-btn {
+        bottom: 75px !important;
+        right: 16px !important;
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+    }
+
+    /* 鼓励卡片 */
+    .encouragement {
+        padding: 18px !important;
+    }
+
+    /* 习惯/任务项 padding */
+    .habit-item, .todo-item {
+        padding: 12px 14px !important;
+    }
+
+    /* 番茄钟数字 */
+    #timerDisplay {
+        font-size: 80px !important;
+    }
+}
+
+/* 手机端 */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 18px !important;
+    }
+    .logo {
+        font-size: 16px !important;
+    }
+
+    /* stat-card 改成单列 */
+    .stat-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* tabs: 4 列变成 5 列横向滚动 */
+    .tabs {
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+    }
+    .tab-btn {
+        flex-shrink: 0;
+    }
+
+    /* 番茄钟数字更小 */
+    #timerDisplay {
+        font-size: 64px !important;
+    }
+
+    /* 习惯输入框垂直堆叠 */
+    .habit-input {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    .habit-input input, .habit-input button {
+        width: 100% !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* 环形图：垂直堆叠 */
+    .donut-wrap {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    .donut-svg {
+        margin: 0 auto !important;
+    }
+    .donut-legend {
+        width: 100% !important;
+    }
+
+    /* 状态条：简化 */
+    .status-time {
+        display: none;
+    }
+    .status-divider:nth-of-type(3) {
+        display: none;
+    }
+}
+
+/* 横屏手机 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .status-bar {
+        bottom: 8px !important;
+        padding: 4px 12px !important;
+    }
+    .fab {
+        bottom: 70px !important;
+    }
+    #timerDisplay {
+        font-size: 56px !important;
+    }
+}
+
+/* 触摸设备：去除 hover 效果（避免移动端 hover 卡住） */
+@media (hover: none) {
+    .fab:hover, .btn:hover, .tab-btn:hover {
+        transform: none !important;
+    }
+}
+
 /* ============ 顶部链接条 ============ */
 .link-bar {
     display: flex;
