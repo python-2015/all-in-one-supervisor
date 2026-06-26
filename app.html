@@ -2,7 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="全能监督">
+    <meta name="description" content="AI 监督与自律系统 · TRAE AI 创造力大赛参赛作品">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <title>全能监督 · AI 监督与自律系统</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dark.css">
@@ -265,12 +273,22 @@
                 </div>
 
                 <div class="chart-container">
-                    <h3>📈 近 7 天番茄钟趋势</h3>
+                    <h3>近 7 天番茄钟趋势</h3>
                     <div class="line-chart" id="lineChart"></div>
                 </div>
 
                 <div class="chart-container">
-                    <h3>🔥 近 7 天习惯热力图</h3>
+                    <h3>近 30 天番茄钟总览</h3>
+                    <div class="bar-chart" id="barChart"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>今日完成进度</h3>
+                    <div class="donut-chart" id="donutChart"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>近 7 天习惯热力图</h3>
                     <div class="heatmap" id="heatmap"></div>
                 </div>
 
