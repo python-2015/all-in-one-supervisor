@@ -661,6 +661,8 @@ function updateOverview() {
 
     updateHeatmap();
     updateLineChart();
+    updateBarChart();
+    updateDonutChart();
     updateEncouragement();
 
     // 同步底部状态条
@@ -749,6 +751,127 @@ function getWeekPomodoro() {
     return AppState.pomodoroData.weekTotal;
 }
 
+// 30 天番茄钟柱状图
+function updateBarChart() {
+    const chart = document.getElementById('barChart');
+    if (!chart) return;
+
+    const today = new Date();
+    const data = [];
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const key = Storage.getDateKey(date);
+        const count = (AppState.pomodoroData.history && AppState.pomodoroData.history[key]) || 0;
+        data.push({ date, count, isToday: i === 0 });
+    }
+
+    const maxCount = Math.max(...data.map(d => d.count), 1);
+    const W = 600, H = 140, P = 16;
+    const barW = (W - P * 2) / data.length - 2;
+
+    const bars = data.map((d, i) => {
+        const x = P + i * (barW + 2);
+        const h = (d.count / maxCount) * (H - P * 2);
+        const y = H - P - h;
+        const color = d.isToday ? '#764ba2' : (d.count > 0 ? '#667eea' : '#2a2a3a');
+        const heightPx = Math.max(h, 2);
+        return `<rect x="${x}" y="${y}" width="${barW}" height="${heightPx}" rx="2"
+                      fill="${color}" opacity="${d.isToday ? 1 : 0.7}">
+                    <title>${d.date.getMonth()+1}/${d.date.getDate()}: ${d.count} 个</title>
+                </rect>`;
+    }).join('');
+
+    const total = data.reduce((s, d) => s + d.count, 0);
+    const activeDays = data.filter(d => d.count > 0).length;
+
+    chart.innerHTML = `
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" class="bar-svg">
+            ${bars}
+        </svg>
+        <div class="chart-summary">
+            30 天共 <strong>${total}</strong> 个番茄，活跃 <strong>${activeDays}</strong> 天
+        </div>
+    `;
+}
+
+// 今日完成进度环图
+function updateDonutChart() {
+    const chart = document.getElementById('donutChart');
+    if (!chart) return;
+
+    const todayKey = Storage.getTodayKey();
+    const pomo = AppState.pomodoroData.today || 0;
+    const pomoGoal = 4; // 每日目标
+    const tasks = AppState.todos.filter(t => t.completed && t.dateKey === todayKey).length;
+    const tasksGoal = 3;
+    const habits = (AppState.habitRecords[todayKey] || []).length;
+    const habitsTotal = AppState.habits.length;
+    const habitsGoal = habitsTotal > 0 ? habitsTotal : 1;
+
+    // 三段弧
+    const segments = [
+        { label: '番茄', value: Math.min(pomo, pomoGoal), goal: pomoGoal, color: '#ff6b6b' },
+        { label: '任务', value: Math.min(tasks, tasksGoal), goal: tasksGoal, color: '#48db80' },
+        { label: '习惯', value: Math.min(habits, habitsGoal), goal: habitsGoal, color: '#667eea' }
+    ];
+
+    // 总进度
+    const totalProgress = (pomo / pomoGoal + tasks / tasksGoal + habits / habitsGoal) / 3;
+    const pct = Math.min(totalProgress, 1);
+
+    // 主环 (综合)
+    const r = 60, cx = 80, cy = 80, circ = 2 * Math.PI * r;
+    const dash = circ * pct;
+    const gap = circ - dash;
+
+    // 下方小环 (3 个分别显示)
+    const miniSegments = segments.map(s => {
+        const sPct = s.goal > 0 ? Math.min(s.value / s.goal, 1) : 0;
+        const sr = 18, scx = 0, scy = 0, sc = 2 * Math.PI * sr;
+        const sd = sc * sPct;
+        return { ...s, pct: sPct, dash: sd, gap: sc - sd };
+    });
+
+    chart.innerHTML = `
+        <div class="donut-wrap">
+            <svg viewBox="0 0 160 160" class="donut-svg">
+                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2a2a3a" stroke-width="14"/>
+                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#donutGrad)" stroke-width="14"
+                        stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${circ/4}"
+                        transform="rotate(-90 ${cx} ${cy})" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="donutGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ff6b6b"/>
+                        <stop offset="50%" stop-color="#48db80"/>
+                        <stop offset="100%" stop-color="#667eea"/>
+                    </linearGradient>
+                </defs>
+                <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">
+                    ${Math.round(pct * 100)}%
+                </text>
+                <text x="${cx}" y="${cy + 18}" text-anchor="middle" font-size="11" fill="#888">
+                    今日综合
+                </text>
+            </svg>
+            <div class="donut-legend">
+                ${segments.map(s => {
+                    const sPct = s.goal > 0 ? Math.min(s.value / s.goal, 1) : 0;
+                    return `<div class="legend-item">
+                        <div class="legend-bar">
+                            <div class="legend-fill" style="width:${sPct*100}%; background:${s.color}"></div>
+                        </div>
+                        <div class="legend-text">
+                            <span class="legend-label" style="color:${s.color}">${s.label}</span>
+                            <span class="legend-value">${s.value} / ${s.goal}</span>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
 function updateHeatmap() {
     const heatmap = document.getElementById('heatmap');
     const today = new Date();
@@ -826,11 +949,23 @@ function init() {
     setupFab();
     setupStatusBar();
     updateOverview();
+    registerServiceWorker();
 
     // 每分钟更新日期
     setInterval(updateDateDisplay, 60000);
 
     console.log('全能监督App 已启动');
+}
+
+// 注册 PWA Service Worker（离线可用）
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((reg) => console.log('SW registered:', reg.scope))
+                .catch((err) => console.warn('SW failed:', err));
+        });
+    }
 }
 
 // 默认把"添加任务"里的日期填成系统当前日期
