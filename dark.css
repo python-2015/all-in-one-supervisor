@@ -1002,6 +1002,312 @@ input[type="date"] {
     }
 }
 
+/* ============================================
+   分心 App 黑名单 UI
+   ============================================ */
+.distraction-settings {
+    background: rgba(28, 28, 42, 0.6) !important;
+    border-radius: 14px !important;
+    padding: 18px 22px !important;
+    margin: 18px 0 !important;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.05) inset,
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        0 12px 32px rgba(0, 0, 0, 0.4),
+        0 24px 60px rgba(255, 107, 107, 0.1) !important;
+}
+
+.distraction-settings h3 {
+    margin: 0 0 8px !important;
+    color: #fff !important;
+    font-size: 16px !important;
+}
+
+.distraction-hint {
+    color: #999 !important;
+    font-size: 12px !important;
+    margin: 0 0 14px !important;
+    line-height: 1.5 !important;
+}
+
+.distraction-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+.distraction-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: rgba(102, 126, 234, 0.12) !important;
+    border: 1px solid rgba(102, 126, 234, 0.25) !important;
+    padding: 8px 14px !important;
+    border-radius: 20px !important;
+    cursor: pointer !important;
+    color: #c8d0f0 !important;
+    font-size: 13px !important;
+    transition: all 0.2s !important;
+    user-select: none !important;
+}
+
+.distraction-item:hover {
+    background: rgba(102, 126, 234, 0.2) !important;
+    border-color: rgba(102, 126, 234, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+.distraction-item input {
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer !important;
+    accent-color: #667eea !important;
+}
+
+.distraction-item:has(input:checked) {
+    background: rgba(255, 107, 107, 0.15) !important;
+    border-color: rgba(255, 107, 107, 0.4) !important;
+    color: #ffc8c8 !important;
+}
+
+/* ============================================
+   强制休息全屏浮层
+   ============================================ */
+.forced-break {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a14 100%) !important;
+    background-color: #0a0a14 !important;
+    z-index: 99999 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+.forced-break.active {
+    display: flex !important;
+    animation: forcedBreakFadeIn 0.6s ease-out;
+}
+
+@keyframes forcedBreakFadeIn {
+    from { opacity: 0; backdrop-filter: blur(0); }
+    to { opacity: 1; backdrop-filter: blur(20px); }
+}
+
+.forced-break-content {
+    text-align: center !important;
+    padding: 30px 24px !important;
+    max-width: 480px !important;
+    width: 100% !important;
+    color: #fff;
+    animation: forcedBreakSlide 0.7s ease-out;
+}
+
+@keyframes forcedBreakSlide {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.breathing-orb {
+    width: 120px !important;
+    height: 120px !important;
+    border-radius: 50% !important;
+    margin: 0 auto 30px !important;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.4) 60%, transparent 100%) !important;
+    box-shadow:
+        0 0 60px rgba(102, 126, 234, 0.6),
+        0 0 120px rgba(118, 75, 162, 0.3),
+        inset 0 0 40px rgba(255, 255, 255, 0.1) !important;
+    animation: orbBreathe 8s ease-in-out infinite;
+}
+
+@keyframes orbBreathe {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 60px rgba(102, 126, 234, 0.6),
+            0 0 120px rgba(118, 75, 162, 0.3),
+            inset 0 0 40px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        transform: scale(1.25);
+        box-shadow:
+            0 0 90px rgba(102, 126, 234, 0.8),
+            0 0 180px rgba(118, 75, 162, 0.5),
+            inset 0 0 60px rgba(255, 255, 255, 0.2);
+    }
+}
+
+.forced-break-title {
+    font-size: 38px !important;
+    font-weight: 700 !important;
+    margin: 0 0 16px !important;
+    background: linear-gradient(135deg, #ff6b6b, #667eea, #48db80) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    letter-spacing: 4px !important;
+}
+
+.forced-break-countdown {
+    font-size: 96px !important;
+    font-weight: 700 !important;
+    margin: 20px 0 24px !important;
+    font-variant-numeric: tabular-nums !important;
+    color: #fff !important;
+    text-shadow: 0 0 30px rgba(102, 126, 234, 0.5) !important;
+    transition: color 0.3s;
+}
+
+.forced-break-countdown.countdown-final {
+    color: #ff9f43 !important;
+    animation: countdownPulse 1s ease-in-out infinite;
+}
+
+@keyframes countdownPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+.forced-break-subtitle {
+    font-size: 16px !important;
+    color: #a8b6f0 !important;
+    margin: 0 0 28px !important;
+    line-height: 1.6 !important;
+}
+
+.break-todo {
+    background: rgba(255, 107, 107, 0.08) !important;
+    border: 1px solid rgba(255, 107, 107, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 18px 22px !important;
+    margin: 24px 0 !important;
+    text-align: left !important;
+}
+
+.break-todo h3 {
+    margin: 0 0 12px !important;
+    font-size: 14px !important;
+    color: #ffc8c8 !important;
+    font-weight: 600 !important;
+}
+
+.break-todo-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 16px !important;
+}
+
+.break-todo-list li {
+    color: #fff !important;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.app-bullet {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: #ff6b6b !important;
+    box-shadow: 0 0 8px #ff6b6b !important;
+}
+
+.break-skip-zone {
+    margin-top: 32px !important;
+    padding-top: 24px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.break-skip-btn {
+    position: relative !important;
+    overflow: hidden !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #888 !important;
+    padding: 14px 28px !important;
+    border-radius: 28px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none !important;
+}
+
+.break-skip-btn:disabled {
+    cursor: not-allowed !important;
+}
+
+.break-skip-progress {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0% !important;
+    background: linear-gradient(90deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.4)) !important;
+    transition: width 0.3s !important;
+    z-index: 0 !important;
+}
+
+.break-skip-text {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.break-skip-hint {
+    font-size: 12px !important;
+    color: #666 !important;
+    margin: 10px 0 0 !important;
+}
+
+.break-stats {
+    margin-top: 24px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    font-size: 13px !important;
+    color: #888 !important;
+}
+
+.break-stats strong {
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.break-stat-divider {
+    color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+    .forced-break-title {
+        font-size: 28px !important;
+        letter-spacing: 2px !important;
+    }
+    .forced-break-countdown {
+        font-size: 72px !important;
+    }
+    .break-todo-list {
+        grid-template-columns: 1fr !important;
+    }
+    .breathing-orb {
+        width: 90px !important;
+        height: 90px !important;
+    }
+    .forced-break-content {
+        padding: 20px 16px !important;
+    }
+}
+
 /* ============ 顶部链接条 ============ */
 .link-bar {
     display: flex;
