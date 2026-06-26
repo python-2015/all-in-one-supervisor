@@ -1,0 +1,33 @@
+{
+  "name": "全能监督 · AI 监督与自律系统",
+  "short_name": "全能监督",
+  "description": "TRAE AI 创造力大赛参赛作品 - AI 监督员陪伴你的成长",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a14",
+  "theme_color": "#667eea",
+  "lang": "zh-CN",
+  "categories": ["productivity", "lifestyle", "health"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
