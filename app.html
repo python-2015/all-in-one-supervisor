@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全能监督 · AI 监督与自律系统</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 链接条（顶部，可关闭） -->
+    <div class="link-bar" id="linkBar">
+        <span class="link-bar-label">链接</span>
+        <a class="link-bar-link" id="localLink" href="file:///D:/02 程子鹏/Code--python/全能监督App/app.html" target="_blank" title="本机链接（仅你本机能用）">本机</a>
+        <span class="link-bar-sep">|</span>
+        <a class="link-bar-link" id="ghLink" href="https://python-2015.github.io/all-in-one-supervisor/app.html" target="_blank" title="公网链接（任何人可用）">公网 GitHub Pages</a>
+        <button class="link-bar-copy" id="copyLocal" title="复制本机链接">复制本地</button>
+        <button class="link-bar-copy" id="copyGh" title="复制公网链接">复制公网</button>
+        <button class="link-bar-close" id="closeLinkBar" title="关闭">×</button>
+    </div>
+
+    <!-- 顶部导航 -->
+    <div class="header">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">
+                    <h1>全能监督</h1>
+                    <p>你的私人成长管家 · v1.0</p>
+                </div>
+            </div>
+            <div class="date-display" id="dateDisplay"></div>
+        </div>
+
+        <!-- 数据概览 -->
+        <div class="overview">
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-info">
+                    <div class="stat-value"><span id="streakDays">0</span></div>
+                    <div class="stat-label">连续打卡天数</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🍅</div>
+                <div class="stat-info">
+                    <div class="stat-value"><span id="todayPomodoro">0</span></div>
+                    <div class="stat-label">今日番茄</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <div class="stat-value"><span id="todayTasks">0</span></div>
+                    <div class="stat-label">完成任务</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-info">
+                    <div class="stat-value"><span id="habitRate">0%</span></div>
+                    <div class="stat-label">习惯完成率</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="pomodoro">
+                <span class="tab-icon">🍅</span>
+                <span class="tab-text">番茄钟</span>
+            </button>
+            <button class="tab-btn" data-tab="habit">
+                <span class="tab-icon">✅</span>
+                <span class="tab-text">习惯打卡</span>
+            </button>
+            <button class="tab-btn" data-tab="todo">
+                <span class="tab-icon">📋</span>
+                <span class="tab-text">任务清单</span>
+            </button>
+            <button class="tab-btn" data-tab="stats">
+                <span class="tab-icon">📊</span>
+                <span class="tab-text">数据统计</span>
+            </button>
+            <button class="tab-btn" data-tab="ai">
+                <span class="tab-icon">🤖</span>
+                <span class="tab-text">AI监督员</span>
+            </button>
+        </div>
+
+        <!-- 番茄钟 -->
+        <div class="tab-content active" id="pomodoro">
+            <div class="pomodoro-container">
+                <h2>专注计时</h2>
+                <div class="timer-display">
+                    <div class="timer-circle">
+                        <svg class="progress-ring" width="280" height="280">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" cx="140" cy="140" r="130" fill="transparent" stroke-width="12"/>
+                            <circle class="progress-ring-fg" cx="140" cy="140" r="130" fill="transparent" stroke-width="12"/>
+                        </svg>
+                        <div class="timer-text">
+                            <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                        </div>
+                        <div class="timer-mode" id="timerMode">专注时间</div>
+                    </div>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="btn btn-primary" id="startBtn">▶ 开始</button>
+                    <button class="btn btn-secondary" id="pauseBtn" disabled>⏸ 暂停</button>
+                    <button class="btn btn-danger" id="resetBtn">↻ 重置</button>
+                </div>
+
+                <div class="timer-settings">
+                    <div class="setting-group">
+                        <label>专注时长</label>
+                        <input type="number" id="focusTime" value="25" min="1" max="120"> 分钟
+                    </div>
+                    <div class="setting-group">
+                        <label>短休息</label>
+                        <input type="number" id="breakTime" value="5" min="1" max="30"> 分钟
+                    </div>
+                    <div class="setting-group">
+                        <label>长休息</label>
+                        <input type="number" id="longBreakTime" value="15" min="1" max="60"> 分钟
+                    </div>
+                </div>
+
+                <div class="pomodoro-info">
+                    <p>🍅 今日已完成：<strong><span id="completedPomodoros">0</span></strong> 个番茄</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 习惯打卡 -->
+        <div class="tab-content" id="habit">
+            <div class="section-header">
+                <h2>🌱 习惯打卡</h2>
+                <div class="habit-input">
+                    <div class="habit-emoji-picker">
+                        <span class="habit-emoji-label">选图标：</span>
+                        <button class="habit-emoji-btn active" data-emoji="🌱">🌱</button>
+                        <button class="habit-emoji-btn" data-emoji="💪">💪</button>
+                        <button class="habit-emoji-btn" data-emoji="📚">📚</button>
+                        <button class="habit-emoji-btn" data-emoji="🏃">🏃</button>
+                        <button class="habit-emoji-btn" data-emoji="💧">💧</button>
+                        <button class="habit-emoji-btn" data-emoji="😴">😴</button>
+                        <button class="habit-emoji-btn" data-emoji="🧘">🧘</button>
+                        <button class="habit-emoji-btn" data-emoji="✍️">✍️</button>
+                    </div>
+                    <input type="text" id="habitInput" placeholder="添加新习惯（如：早睡、运动、阅读...）" maxlength="50">
+                    <button class="btn btn-primary" id="addHabitBtn">+ 添加</button>
+                </div>
+            </div>
+
+            <div class="habits-list" id="habitsList"></div>
+
+            <div class="habits-empty" id="habitsEmpty">
+                <div class="empty-icon">🌱</div>
+                <p class="empty-title">还没有习惯，从添加一个开始吧！</p>
+                <p class="empty-hint">坚持 21 天就能养成一个好习惯</p>
+                <div class="empty-examples">
+                    <span class="empty-example">💧 喝水</span>
+                    <span class="empty-example">📚 读书 10 分钟</span>
+                    <span class="empty-example">🏃 运动 15 分钟</span>
+                    <span class="empty-example">😴 23 点前睡</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待办清单 -->
+        <div class="tab-content" id="todo">
+            <div class="section-header">
+                <h2>📋 任务清单</h2>
+                <div class="habit-input">
+                    <input type="text" id="todoInput" placeholder="添加新任务..." maxlength="100" style="flex:1; min-width:200px;">
+                    <input type="date" id="todoDueDate" class="todo-date-input" title="截止日期（可选）">
+                    <button class="btn btn-primary" id="addTodoBtn">+ 添加</button>
+                </div>
+            </div>
+
+            <div class="todo-filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="active">进行中</button>
+                <button class="filter-btn" data-filter="completed">已完成</button>
+            </div>
+
+            <div class="todo-list" id="todoList"></div>
+
+            <div class="todo-empty" id="todoEmpty">
+                <div class="empty-icon">📝</div>
+                <p class="empty-title">任务列表是空的</p>
+                <p class="empty-hint">添加一个任务开始你的计划吧</p>
+                <div class="empty-examples">
+                    <span class="empty-example">📧 回 3 封邮件</span>
+                    <span class="empty-example">💻 写代码 1 小时</span>
+                    <span class="empty-example">🛒 买菜</span>
+                    <span class="empty-example">📞 打电话给爸妈</span>
+                </div>
+            </div>
+
+            <div class="todo-footer" id="todoFooter" style="display:none;">
+                <span id="todoStats">0/0 完成</span>
+                <button class="btn btn-link" id="clearCompletedBtn">清除已完成</button>
+            </div>
+        </div>
+
+        <!-- 数据统计 -->
+        <div class="tab-content" id="stats">
+            <div class="stats-container">
+                <h2>📊 数据统计</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-block">
+                        <h3>🍅 番茄钟</h3>
+                        <div class="stat-detail">
+                            <div class="stat-row">
+                                <span>今日</span>
+                                <strong id="statTodayPomodoro">0 个</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>本周</span>
+                                <strong id="statWeekPomodoro">0 个</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>累计</span>
+                                <strong id="statTotalPomodoro">0 个</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-block">
+                        <h3>📋 任务</h3>
+                        <div class="stat-detail">
+                            <div class="stat-row">
+                                <span>今日完成</span>
+                                <strong id="statTodayTasks">0 个</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>累计完成</span>
+                                <strong id="statTotalTasks">0 个</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-block">
+                        <h3>🌱 习惯</h3>
+                        <div class="stat-detail">
+                            <div class="stat-row">
+                                <span>今日完成率</span>
+                                <strong id="statTodayHabits">0%</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>连续打卡</span>
+                                <strong id="statStreak">0 天</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>📈 近 7 天番茄钟趋势</h3>
+                    <div class="line-chart" id="lineChart"></div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>🔥 近 7 天习惯热力图</h3>
+                    <div class="heatmap" id="heatmap"></div>
+                </div>
+
+                <div class="encouragement">
+                    <div class="encourage-icon">✨</div>
+                    <p id="encourageText">每一点进步都是你前进的动力！</p>
+                </div>
+
+                <div class="data-tools">
+                    <h3>💾 数据管理</h3>
+                    <p class="tools-hint">所有数据都存本地，记得定期备份</p>
+                    <div class="tools-buttons">
+                        <button class="btn btn-primary" onclick="exportData()">📥 导出数据</button>
+                        <label class="btn btn-secondary file-label">
+                            📤 导入数据
+                            <input type="file" accept=".json" style="display:none" onchange="importData(this.files[0])">
+                        </label>
+                        <button class="btn btn-secondary" onclick="requestNotifyPermission()">🔔 开启通知</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 监督员 -->
+        <div class="tab-content" id="ai">
+            <div class="ai-container">
+                <div class="ai-header">
+                    <div class="ai-avatar">🤖</div>
+                    <div class="ai-info">
+                        <h2>小监</h2>
+                        <p class="ai-status"><span class="ai-dot"></span> 在线 · 你的温柔自律伙伴</p>
+                    </div>
+                </div>
+
+                <div class="ai-chat" id="aiChat">
+                    <!-- 聊天消息会动态插入 -->
+                </div>
+
+                <div class="ai-quick-replies" id="aiQuickReplies">
+                    <button class="ai-chip" data-msg="我累了">😪 我累了</button>
+                    <button class="ai-chip" data-msg="不想做了">😩 不想做了</button>
+                    <button class="ai-chip" data-msg="今天表现如何">📊 今天表现如何</button>
+                    <button class="ai-chip" data-msg="鼓励我一下">💪 鼓励我一下</button>
+                    <button class="ai-chip" data-msg="我不知道该做什么">🤔 不知道该做什么</button>
+                </div>
+
+                <div class="ai-input-area">
+                    <input type="text" id="aiInput" placeholder="跟小监说点什么..." maxlength="200">
+                    <button class="btn btn-primary" id="aiSendBtn">发送</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>✨ 全能监督 · 让每一天都有新进步</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- 柔和的全局提示 Toast -->
+    <div class="gentle-toast" id="gentleToast">
+        <div class="gentle-toast-content">
+            <div class="gentle-toast-icon" id="gentleToastIcon">☕</div>
+            <div class="gentle-toast-text" id="gentleToastText">休息一下吧~</div>
+        </div>
+    </div>
+
+    <!-- 帮助按钮 -->
+    <button class="help-btn" id="helpBtn" title="查看所有快捷键和使用技巧">
+        ❓ 需要帮助？点这里！
+    </button>
+
+    <!-- 底部状态条 -->
+    <div class="status-bar" id="statusBar">
+        <div class="status-item">
+            <span class="status-dot status-dot-pomo"></span>
+            <span id="statusPomo">0</span> 番茄
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+            <span class="status-dot status-dot-task"></span>
+            <span id="statusTask">0</span> 任务
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+            <span class="status-dot status-dot-habit"></span>
+            <span id="statusHabit">0%</span> 习惯
+        </div>
+        <div class="status-spacer"></div>
+        <div class="status-time" id="statusTime">--:--</div>
+    </div>
+
+    <!-- 浮动操作按钮 (FAB) -->
+    <button class="fab" id="fabBtn" title="快速添加任务">
+        <span class="fab-icon">+</span>
+    </button>
+
+    <!-- 帮助面板 -->
+    <div class="help-overlay" id="helpOverlay">
+        <div class="help-modal">
+            <button class="help-close" id="helpClose">×</button>
+            <h2>📖 使用手册</h2>
+
+            <div class="help-section">
+                <h3>⌨️ 键盘快捷键</h3>
+                <div class="help-keys">
+                    <div class="help-key"><kbd>1</kbd> 番茄钟</div>
+                    <div class="help-key"><kbd>2</kbd> 习惯打卡</div>
+                    <div class="help-key"><kbd>3</kbd> 任务清单</div>
+                    <div class="help-key"><kbd>4</kbd> 数据统计</div>
+                    <div class="help-key"><kbd>5</kbd> AI 监督员</div>
+                    <div class="help-key"><kbd>Space</kbd> 开始/暂停番茄钟</div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h3>🍅 番茄钟</h3>
+                <p>25 分钟专注 + 5 分钟休息，每 4 个番茄长休息一次。结束后会播放柔和提示音 + 温柔语音播报。</p>
+            </div>
+
+            <div class="help-section">
+                <h3>🌱 习惯打卡</h3>
+                <p>每天勾选完成你的习惯。连续打卡会显示"🔥 N 天"，坚持 21 天就能养成好习惯。</p>
+            </div>
+
+            <div class="help-section">
+                <h3>📋 任务清单</h3>
+                <p>添加任务，可设截止日期和优先级。点 🔥 切换优先级，✅ 标记完成。</p>
+            </div>
+
+            <div class="help-section">
+                <h3>🤖 AI 监督员"小监"</h3>
+                <p>想聊随时说，比如：<br>
+                · "我累了" / "焦虑" → 共情 + 小技巧<br>
+                · "今天表现如何" → 详细战报<br>
+                · "鼓励我一下" → 温柔鼓励<br>
+                · "提醒我" / "今天做了什么" → 实用建议</p>
+            </div>
+
+            <div class="help-section">
+                <h3>💾 数据安全</h3>
+                <p>所有数据存在你浏览器本地，<strong>记得在"数据统计"里定期导出备份</strong>。</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
