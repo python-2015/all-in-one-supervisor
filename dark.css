@@ -898,12 +898,19 @@ input[type="date"] {
         font-size: 12px !important;
     }
 
-    /* 帮助按钮：往上挪避开状态条 */
+    /* 帮助按钮：挪到左下角，避开 FAB */
     .help-btn {
-        bottom: 75px !important;
-        right: 16px !important;
-        padding: 8px 14px !important;
+        bottom: 18px !important;
+        left: 16px !important;
+        right: auto !important;
+        padding: 10px 14px !important;
         font-size: 12px !important;
+        max-width: 140px !important;
+    }
+
+    /* body 底部加 padding，避免被状态条/FAB/帮助按钮挡住内容 */
+    body {
+        padding-bottom: 80px !important;
     }
 
     /* 鼓励卡片 */
