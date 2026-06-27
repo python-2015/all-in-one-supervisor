@@ -296,6 +296,26 @@ input:focus {
 .help-section p {
     color: #c0c0d0 !important;
 }
+.help-section ul, .help-section ol {
+    color: #c0c0d0 !important;
+    line-height: 1.7 !important;
+    padding-left: 22px !important;
+    margin: 8px 0 14px !important;
+}
+.help-section ul li, .help-section ol li {
+    margin-bottom: 6px !important;
+}
+.help-section ul li::marker {
+    color: #8a9cf0 !important;
+}
+.help-section ol li::marker {
+    color: #ff6b6b !important;
+    font-weight: 600 !important;
+}
+.help-section strong {
+    color: #fff !important;
+    font-weight: 600 !important;
+}
 .help-close {
     color: #a8a8b8 !important;
 }
