@@ -695,7 +695,7 @@ function updateLineChart() {
     const maxCount = Math.max(...data.map(d => d.count), 1);
 
     // SVG 折线图
-    const W = 600, H = 180, P = 30;
+    const W = 600, H = 80, P = 16;
     const stepX = (W - P * 2) / (data.length - 1);
     const points = data.map((d, i) => {
         const x = P + i * stepX;
@@ -723,19 +723,19 @@ function updateLineChart() {
             </defs>
             ${points.map((p, i) => `
                 <line x1="${p.x}" y1="${H - P}" x2="${p.x}" y2="${P}"
-                      stroke="#e8eaf6" stroke-width="1" stroke-dasharray="2,4"/>
+                      stroke="#3a3a5a" stroke-width="1" stroke-dasharray="2,4"/>
             `).join('')}
             <path d="${pathD} L ${points[points.length-1].x},${H-P} L ${points[0].x},${H-P} Z"
                   fill="url(#lineGradient)"/>
-            <path d="${pathD}" fill="none" stroke="#667eea" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="${pathD}" fill="none" stroke="#667eea" stroke-width="2" stroke-linecap="round"/>
             ${points.map(p => `
-                <circle cx="${p.x}" cy="${p.y}" r="${p.isToday ? 6 : 4}"
+                <circle cx="${p.x}" cy="${p.y}" r="${p.isToday ? 4 : 2.5}"
                         fill="${p.isToday ? '#764ba2' : '#fff'}"
-                        stroke="#667eea" stroke-width="2"/>
-                <text x="${p.x}" y="${p.y - 12}" text-anchor="middle"
-                      font-size="11" fill="#667eea" font-weight="600">${p.count}</text>
-                <text x="${p.x}" y="${H - 8}" text-anchor="middle"
-                      font-size="11" fill="#888">周${p.day}</text>
+                        stroke="#667eea" stroke-width="1.5"/>
+                <text x="${p.x}" y="${p.y - 8}" text-anchor="middle"
+                      font-size="9" fill="#667eea" font-weight="600">${p.count}</text>
+                <text x="${p.x}" y="${H - 5}" text-anchor="middle"
+                      font-size="9" fill="#888">周${p.day}</text>
             `).join('')}
         </svg>
         <div class="chart-summary">
@@ -767,7 +767,7 @@ function updateBarChart() {
     }
 
     const maxCount = Math.max(...data.map(d => d.count), 1);
-    const W = 600, H = 140, P = 16;
+    const W = 600, H = 70, P = 10;
     const barW = (W - P * 2) / data.length - 2;
 
     const bars = data.map((d, i) => {
@@ -821,7 +821,7 @@ function updateDonutChart() {
     const pct = Math.min(totalProgress, 1);
 
     // 主环 (综合)
-    const r = 60, cx = 80, cy = 80, circ = 2 * Math.PI * r;
+    const r = 42, cx = 55, cy = 55, circ = 2 * Math.PI * r;
     const dash = circ * pct;
     const gap = circ - dash;
 
@@ -835,9 +835,9 @@ function updateDonutChart() {
 
     chart.innerHTML = `
         <div class="donut-wrap">
-            <svg viewBox="0 0 160 160" class="donut-svg">
-                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2a2a3a" stroke-width="14"/>
-                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#donutGrad)" stroke-width="14"
+            <svg viewBox="0 0 110 110" class="donut-svg">
+                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2a2a3a" stroke-width="10"/>
+                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#donutGrad)" stroke-width="10"
                         stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${circ/4}"
                         transform="rotate(-90 ${cx} ${cy})" stroke-linecap="round"/>
                 <defs>
@@ -847,10 +847,10 @@ function updateDonutChart() {
                         <stop offset="100%" stop-color="#667eea"/>
                     </linearGradient>
                 </defs>
-                <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">
+                <text x="${cx}" y="${cy + 1}" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">
                     ${Math.round(pct * 100)}%
                 </text>
-                <text x="${cx}" y="${cy + 18}" text-anchor="middle" font-size="11" fill="#888">
+                <text x="${cx}" y="${cy + 16}" text-anchor="middle" font-size="9" fill="#888">
                     今日综合
                 </text>
             </svg>
@@ -949,6 +949,7 @@ function init() {
     setupFab();
     setupStatusBar();
     setupDistractionSettings();
+    setupTabGuard();
     updateOverview();
     registerServiceWorker();
 
@@ -2045,13 +2046,11 @@ function endForcedBreak(complete) {
     const stats = getTodayBreakStats();
     if (complete) {
         stats.taken++;
-        showToast('太棒了', '1 分钟休息完成，可以继续啦');
-        speak('休息好了... 准备好开始下一个番茄钟了吗');
+        saveTodayBreakStats(stats);
     } else {
         stats.skipped++;
-        showToast('已跳过', '休息被跳过了... 下次试试坚持 1 分钟？');
+        saveTodayBreakStats(stats);
     }
-    saveTodayBreakStats(stats);
 
     // 关闭浮层
     document.getElementById('forcedBreak').classList.remove('active');
@@ -2064,21 +2063,142 @@ function endForcedBreak(complete) {
         }
     } catch (e) {}
 
-    // 自动开始休息倒计时（如果用户完成了 1 分钟强制休息）
     if (complete) {
+        // 开启"冷静期"30 秒，避免用户立刻切到分心 App
+        startPostBreak();
+        showToast('太棒了', '1 分钟休息完成，进入 30 秒冷静期');
+    } else {
+        showToast('已跳过', '休息被跳过了... 下次试试坚持 1 分钟？');
+        // 跳过就直接准备下一个番茄
         const isLongBreak = (AppState.completedPomodoros % 4 === 0);
         pomodoroMode = isLongBreak ? 'longBreak' : 'shortBreak';
         pomodoroTime = isLongBreak ? (parseInt(document.getElementById('longBreakTime').value) || 15) * 60
                                     : (parseInt(document.getElementById('breakTime').value) || 5) * 60;
-        document.getElementById('startBtn').disabled = false;
-        document.getElementById('pauseBtn').disabled = true;
         document.getElementById('timerLabel').textContent = isLongBreak ? '长休息' : '短休息';
         updateTimerDisplay();
-        // 5 秒后自动开始
-        setTimeout(() => {
-            if (!breakActive && pomodoroTime > 0) startPomodoro();
-        }, 5000);
     }
+}
+
+// ============ 休息后冷静期（30 秒） ============
+let postBreakTimer = null;
+let postBreakCountdown = 30;
+let postBreakActive = false;
+let postBreakSwitchCount = 0;
+let tabGuardUntil = 0;  // 切走保护期（毫秒时间戳）
+
+function startPostBreak() {
+    if (postBreakActive) return;
+    postBreakActive = true;
+    postBreakCountdown = 30;
+    postBreakSwitchCount = 0;
+
+    document.getElementById('postBreak').classList.add('active');
+    const cd = document.getElementById('postBreakCountdown');
+    cd.textContent = postBreakCountdown;
+
+    // 30 秒倒计时
+    function tick() {
+        if (!postBreakActive) return;
+        postBreakCountdown--;
+        cd.textContent = postBreakCountdown;
+        if (postBreakCountdown <= 0) {
+            endPostBreak('continue');
+            return;
+        }
+        // 切走保护：3 分钟内切走会被警告
+        tabGuardUntil = Date.now() + 3 * 60 * 1000;
+        postBreakTimer = setTimeout(tick, 1000);
+    }
+    postBreakTimer = setTimeout(tick, 1000);
+
+    // 按钮事件
+    document.getElementById('postBreakContinue').onclick = () => endPostBreak('continue');
+    document.getElementById('postBreakRest').onclick = () => endPostBreak('rest');
+}
+
+function endPostBreak(action) {
+    if (!postBreakActive) return;
+    postBreakActive = false;
+    if (postBreakTimer) {
+        clearTimeout(postBreakTimer);
+        postBreakTimer = null;
+    }
+    document.getElementById('postBreak').classList.remove('active');
+
+    if (action === 'rest') {
+        // 强制 5 分钟额外休息
+        pomodoroMode = 'shortBreak';
+        pomodoroTime = 5 * 60;
+        document.getElementById('timerLabel').textContent = '短休息';
+        speak('好的，再休息 5 分钟... 别刷手机');
+        showToast('已休息', '5 分钟后再战');
+    } else {
+        // 继续下一个番茄钟（专注模式）
+        pomodoroMode = 'focus';
+        pomodoroTime = (parseInt(document.getElementById('focusTime').value) || 25) * 60;
+        document.getElementById('timerLabel').textContent = '专注中';
+        speak('好的，开始下一个番茄钟');
+    }
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('pauseBtn').disabled = true;
+    updateTimerDisplay();
+    // 1.5 秒后自动开始
+    setTimeout(() => {
+        if (!breakActive && !postBreakActive && pomodoroTime > 0) startPomodoro();
+    }, 1500);
+}
+
+// ============ 切走检测（Page Visibility API） ============
+function setupTabGuard() {
+    let hiddenAt = 0;
+    document.addEventListener('visibilitychange', () => {
+        // 保护期内切走 → 警告
+        if (document.hidden) {
+            hiddenAt = Date.now();
+        } else {
+            // 切回
+            if (hiddenAt > 0 && Date.now() - hiddenAt > 2000) {
+                // 切走超过 2 秒才算
+                const now = Date.now();
+                if (tabGuardUntil > now) {
+                    // 还在保护期内
+                    postBreakSwitchCount++;
+                    showTabWarning();
+                }
+            }
+            hiddenAt = 0;
+        }
+    });
+    // 防止快捷键切应用（部分浏览器支持）
+    window.addEventListener('blur', () => {
+        const now = Date.now();
+        if (tabGuardUntil > now && !postBreakActive && !breakActive) {
+            // 不警告（避免和 visibilitychange 重复）
+        }
+    });
+}
+
+function showTabWarning() {
+    const overlay = document.getElementById('tabWarning');
+    document.getElementById('tabSwitchCount').textContent = postBreakSwitchCount;
+
+    const messages = [
+        '刚休息完就切走？',
+        '你刚说好的不打开这些 App',
+        '再坚持 3 分钟',
+        '你的专注在流失',
+        '番茄钟不希望你这样'
+    ];
+    document.getElementById('tabWarningText').textContent = messages[Math.floor(Math.random() * messages.length)];
+
+    overlay.classList.add('active');
+
+    document.getElementById('tabWarningBtn').onclick = () => {
+        overlay.classList.remove('active');
+        showToast('欢迎回来', '继续保持');
+    };
+    // 10 秒后自动关闭
+    setTimeout(() => overlay.classList.remove('active'), 10000);
 }
 
 // 初始化黑名单 UI
