@@ -830,24 +830,31 @@ body {
     font-weight: 700;
 }
 
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
 .chart-container {
     background: #f9f9f9;
     border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
+    padding: 14px 16px;
+    margin-bottom: 0;
 }
 
 .chart-container h3 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .heatmap {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 6px;
 }
 
 .heatmap-cell {
@@ -912,15 +919,18 @@ body {
     .overview {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+    .charts-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .tab-text {
         display: none;
     }
-    
+
     .tab-btn {
         font-size: 24px;
         padding: 12px;
@@ -946,6 +956,10 @@ body {
     .overview {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
     }
     
     .stat-card {
