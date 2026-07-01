@@ -293,6 +293,10 @@ input:focus {
 .help-section h3 {
     color: #8a9cf0 !important;
 }
+
+.chart-container h3 {
+    color: #e8e8f0 !important;
+}
 .help-section p {
     color: #c0c0d0 !important;
 }
@@ -655,9 +659,9 @@ input[type="date"] {
     bottom: 60px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(28, 28, 42, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(28, 28, 42, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 50px;
     padding: 10px 22px;
@@ -669,6 +673,13 @@ input[type="date"] {
     font-size: 13px;
     color: #e8e8f0;
     max-width: calc(100% - 32px);
+    opacity: 0.55;
+    transition: opacity 0.3s, background 0.3s;
+}
+
+.status-bar:hover {
+    opacity: 1;
+    background: rgba(28, 28, 42, 0.95);
 }
 
 .status-item {
@@ -762,7 +773,7 @@ input[type="date"] {
    ============================================ */
 .bar-svg {
     width: 100% !important;
-    height: 140px !important;
+    height: 70px !important;
     display: block;
 }
 
@@ -781,8 +792,8 @@ input[type="date"] {
 }
 
 .donut-svg {
-    width: 160px !important;
-    height: 160px !important;
+    width: 110px !important;
+    height: 110px !important;
     flex-shrink: 0;
 }
 
@@ -990,7 +1001,7 @@ input[type="date"] {
     /* 环形图：垂直堆叠 */
     .donut-wrap {
         flex-direction: column !important;
-        align-items: stretch !important;
+        align-items: center !important;
     }
     .donut-svg {
         margin: 0 auto !important;
@@ -1333,6 +1344,231 @@ input[type="date"] {
     .forced-break-content {
         padding: 20px 16px !important;
     }
+}
+
+/* ============================================
+   休息后冷静期（30 秒）
+   ============================================ */
+.post-break {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 10, 20, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    z-index: 99998 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+.post-break.active {
+    display: flex !important;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.post-break-content {
+    text-align: center !important;
+    max-width: 500px !important;
+    width: 100% !important;
+    background: linear-gradient(135deg, rgba(28, 28, 42, 0.9), rgba(20, 20, 35, 0.9)) !important;
+    border: 1px solid rgba(102, 126, 234, 0.3) !important;
+    border-radius: 20px !important;
+    padding: 36px 28px !important;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.05) inset,
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 30px 80px rgba(102, 126, 234, 0.2) !important;
+}
+
+.post-break-title {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    margin: 0 0 16px !important;
+    color: #fff !important;
+    background: linear-gradient(135deg, #667eea, #48db80) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+.post-break-warn, .post-break-warn2 {
+    color: #c8d0f0 !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    margin: 0 0 8px !important;
+}
+
+.post-break-warn strong {
+    color: #ff6b6b !important;
+    font-weight: 600 !important;
+}
+
+.post-break-countdown {
+    font-size: 72px !important;
+    font-weight: 700 !important;
+    color: #667eea !important;
+    margin: 24px 0 !important;
+    font-variant-numeric: tabular-nums !important;
+    text-shadow: 0 0 30px rgba(102, 126, 234, 0.5) !important;
+}
+
+.post-break-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin: 20px 0 12px !important;
+}
+
+.post-break-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px 24px !important;
+    border-radius: 14px !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    font-weight: 600 !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.post-break-btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    color: #fff !important;
+    font-size: 18px !important;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+}
+.post-break-btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5) !important;
+}
+
+.post-break-btn-secondary {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #c8d0f0 !important;
+    font-size: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.post-break-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.post-break-btn-hint {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    margin-top: 4px !important;
+}
+
+.post-break-auto-hint {
+    color: #666 !important;
+    font-size: 12px !important;
+    margin: 16px 0 0 !important;
+}
+
+/* ============================================
+   切走检测警告
+   ============================================ */
+.tab-warning {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 10, 20, 0.92) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    z-index: 99997 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+.tab-warning.active {
+    display: flex !important;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.tab-warning-content {
+    text-align: center !important;
+    max-width: 400px !important;
+    width: 100% !important;
+    background: linear-gradient(135deg, rgba(40, 20, 30, 0.95), rgba(60, 20, 30, 0.95)) !important;
+    border: 1px solid rgba(255, 107, 107, 0.3) !important;
+    border-radius: 18px !important;
+    padding: 32px 24px !important;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.05) inset,
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 30px 80px rgba(255, 107, 107, 0.25) !important;
+}
+
+.tab-warning-title {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    color: #ff6b6b !important;
+    margin: 0 0 14px !important;
+}
+
+.tab-warning-text {
+    color: #fff !important;
+    font-size: 16px !important;
+    margin: 0 0 12px !important;
+    line-height: 1.5 !important;
+}
+
+.tab-warning-hint {
+    color: #c8a8a8 !important;
+    font-size: 13px !important;
+    margin: 0 0 24px !important;
+    line-height: 1.5 !important;
+}
+
+.tab-warning-hint strong {
+    color: #ff6b6b !important;
+    font-weight: 600 !important;
+}
+
+.tab-warning-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 14px 36px !important;
+    border-radius: 24px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4) !important;
+    transition: all 0.2s !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.tab-warning-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 28px rgba(255, 107, 107, 0.5) !important;
+}
+
+.tab-warning-btn:active {
+    transform: translateY(0) !important;
+}
+
+.tab-warning-stats {
+    margin-top: 24px !important;
+    color: #888 !important;
+    font-size: 13px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.tab-warning-stats strong {
+    color: #ff6b6b !important;
+    font-weight: 700 !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* ============ 顶部链接条 ============ */
