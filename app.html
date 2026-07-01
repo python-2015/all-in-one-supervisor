@@ -287,24 +287,26 @@
                     </div>
                 </div>
 
-                <div class="chart-container">
-                    <h3>近 7 天番茄钟趋势</h3>
-                    <div class="line-chart" id="lineChart"></div>
-                </div>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>近 7 天番茄钟趋势</h3>
+                        <div class="line-chart" id="lineChart"></div>
+                    </div>
 
-                <div class="chart-container">
-                    <h3>近 30 天番茄钟总览</h3>
-                    <div class="bar-chart" id="barChart"></div>
-                </div>
+                    <div class="chart-container">
+                        <h3>近 30 天番茄钟总览</h3>
+                        <div class="bar-chart" id="barChart"></div>
+                    </div>
 
-                <div class="chart-container">
-                    <h3>今日完成进度</h3>
-                    <div class="donut-chart" id="donutChart"></div>
-                </div>
+                    <div class="chart-container">
+                        <h3>今日完成进度</h3>
+                        <div class="donut-chart" id="donutChart"></div>
+                    </div>
 
-                <div class="chart-container">
-                    <h3>近 7 天习惯热力图</h3>
-                    <div class="heatmap" id="heatmap"></div>
+                    <div class="chart-container">
+                        <h3>近 7 天习惯热力图</h3>
+                        <div class="heatmap" id="heatmap"></div>
+                    </div>
                 </div>
 
                 <div class="encouragement">
@@ -548,6 +550,40 @@
                 <span>今日完成休息: <strong id="breakTaken">0</strong> 次</span>
                 <span class="break-stat-divider">|</span>
                 <span>跳过休息: <strong id="breakSkipped">0</strong> 次</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 休息后冷静期（避免立刻切走） -->
+    <div class="post-break" id="postBreak">
+        <div class="post-break-content">
+            <h2 class="post-break-title">休息好了？</h2>
+            <p class="post-break-warn">接下来 30 秒，<strong>不要打开游戏、B站、抖音、微信</strong>。</p>
+            <p class="post-break-warn2">这些 App 会立刻把刚休息的能量耗光。</p>
+            <div class="post-break-countdown" id="postBreakCountdown">30</div>
+            <div class="post-break-actions">
+                <button class="post-break-btn post-break-btn-primary" id="postBreakContinue">
+                    继续专注
+                    <span class="post-break-btn-hint">下一个番茄钟</span>
+                </button>
+                <button class="post-break-btn post-break-btn-secondary" id="postBreakRest">
+                    再休息 5 分钟
+                    <span class="post-break-btn-hint">我还没恢复好</span>
+                </button>
+            </div>
+            <p class="post-break-auto-hint" id="postBreakAutoHint">不点 30 秒后自动开始下一个番茄</p>
+        </div>
+    </div>
+
+    <!-- 切走检测警告 -->
+    <div class="tab-warning" id="tabWarning">
+        <div class="tab-warning-content">
+            <h2 class="tab-warning-title">你又分心了</h2>
+            <p class="tab-warning-text" id="tabWarningText">刚休息完就切走？</p>
+            <p class="tab-warning-hint">再 3 分钟内切回 <strong>全能监督</strong> 一次，证明你还在坚持。</p>
+            <button class="tab-warning-btn" id="tabWarningBtn">我回来了</button>
+            <div class="tab-warning-stats" id="tabWarningStats">
+                本次专注已切走 <strong id="tabSwitchCount">0</strong> 次
             </div>
         </div>
     </div>
